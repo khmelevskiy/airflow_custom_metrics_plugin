@@ -23,7 +23,7 @@ tools such as Grafana. Also, it prints the metrics to the logs (I'm not sure if 
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/custom-metrics-plugin.git
+   git clone https://github.com/khmelevskiy/airflow_custom_metrics_plugin.git
    cd custom-metrics-plugin
    ```
 
