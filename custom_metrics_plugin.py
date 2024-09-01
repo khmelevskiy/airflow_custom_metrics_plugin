@@ -63,7 +63,7 @@ class TaskMonitorListener:
     def get_metric_name(self, task_instance: TaskInstance, metric_name: str) -> str:
         """
         Get metric name for task_instance.
-        In statsd configuration they have name: `tasks_cpu_usage_percent` and `tasks_memory_usage_percent`.
+        In statsd configuration they have name: `tasks_cpu_usage_percent` and `tasks_memory_usage_bytes`.
         Replace `.` to `__` in dag_id and task_id, because with `.` in name metrics are not displayed in Grafana.
 
         Parameters
