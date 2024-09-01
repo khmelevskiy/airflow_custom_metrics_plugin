@@ -58,7 +58,7 @@ tools such as Grafana. Also, it prints the metrics to the logs (I'm not sure if 
         task_id: "$3"
     - match: "*.custom_metrics_memory_usage_bytes.*.*"
       match_metric_type: gauge
-      name: "tasks_memory_usage_percent"
+      name: "tasks_memory_usage_bytes"
       labels:
         airflow_id: "$1"
         dag_id: "$2"
@@ -71,7 +71,7 @@ Once the plugin is installed and enabled, it automatically starts monitoring tas
 memory usage metrics will be sent to StatsD under the following names:
 
 - `tasks_cpu_usage_percent`: The CPU usage percentage of a task.
-- `tasks_memory_usage_percent`: The memory usage of a task in bytes.
+- `tasks_memory_usage_bytes`: The memory usage of a task in bytes.
 
 The metrics are tagged with the following labels:
 
@@ -84,7 +84,7 @@ The metrics are tagged with the following labels:
 Given a DAG with `dag_id="example_dag"` and a task with `task_id="example_task.test"`, the metrics would be named:
 
 - `tasks_cpu_usage_percent.example_dag.example_task__test`
-- `tasks_memory_usage_percent.example_dag.example_task__test`
+- `tasks_memory_usage_bytes.example_dag.example_task__test`
 
 ## Configuration
 
@@ -111,9 +111,9 @@ label_values(tasks_cpu_usage_percent{airflow_id="$airflow_id"}, dag_id) - dag_id
 label_values(tasks_cpu_usage_percent{airflow_id="$airflow_id", dag_id="$dag_id"}, task_id) - task_id
 
 tasks_cpu_usage_percent{airflow_id="$airflow_id", dag_id="$dag_id", task_id="$task_id"} - For dashboard `CPU`
-tasks_memory_usage_percent{airflow_id="$airflow_id", dag_id="$dag_id", task_id="$task_id"} - For dashboard `RAM`
+tasks_memory_usage_bytes{airflow_id="$airflow_id", dag_id="$dag_id", task_id="$task_id"} - For dashboard `RAM`
 topk(10, max_over_time(max by(dag_id, task_id) (tasks_cpu_usage_percent{airflow_id="$airflow_id"})[24h])) - For dashboard `Top 10 CPU [24h]`
-topk(10, max_over_time(max by(dag_id, task_id) (tasks_memory_usage_percent{airflow_id="$airflow_id"})[24h])) - For dashboard `Top 10 RAM [24h]`
+topk(10, max_over_time(max by(dag_id, task_id) (tasks_memory_usage_bytes{airflow_id="$airflow_id"})[24h])) - For dashboard `Top 10 RAM [24h]`
 ```
 
 ### Dashboard
