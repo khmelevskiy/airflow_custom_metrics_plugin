@@ -1,6 +1,7 @@
 # airflow_custom_metrics_plugin
 
-This plugin adds cpu and ram stats for every tasks in airflow
+This plugin adds cpu and ram stats for every tasks in airflow.
+Tested on python 3.12.4 and apache-airflow 2.9.3
 
 ---
 
