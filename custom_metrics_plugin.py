@@ -58,7 +58,30 @@ class TaskMonitorListener:
 
         import os
 
-        return os.getenv("CUSTOM_METRICS_PLUGIN_ENABLED", "False").lower() in ["true", "1", "t", "y", "yes"]
+        return os.getenv("CUSTOM_METRICS_PLUGIN_ENABLED", "false").lower() in ["true", "1", "t", "y", "yes"]
+
+    @property
+    def check_logging_enabled(self):
+        """
+        If the logging is disabled via an environment variable or if the environment variable is not set, we exit
+        """
+
+        import os
+
+        return os.getenv("CUSTOM_METRICS_PLUGIN_LOGGING_ENABLED", "false").lower() in ["true", "1", "t", "y", "yes"]
+
+    def print_log(self, message: str):
+        """
+        Print log message if logging is enabled.
+
+        Parameters
+        ----------
+        message: str
+            Log message.
+        """
+
+        if self.check_logging_enabled:
+            logging.info(message)
 
     def get_metric_name(self, task_instance: TaskInstance, metric_name: str) -> str:
         """
@@ -104,7 +127,7 @@ class TaskMonitorListener:
             Stats.gauge(self.get_metric_name(task_instance, "custom_metrics_cpu_usage_percent"), 0)
             Stats.gauge(self.get_metric_name(task_instance, "custom_metrics_memory_usage_bytes"), 0)
 
-            logging.info(
+            self.print_log(
                 f"===== 📊🏁CUSTOM_METRICS_PLUGIN. Task {task_instance.task_id} in DAG {task_instance.dag_id} completed ====="
             )
 
@@ -121,7 +144,7 @@ class TaskMonitorListener:
 
         sleep_interval_seconds = int(os.getenv("CUSTOM_METRICS_PLUGIN_SLEEP_INTERVAL_SECONDS", 1))
 
-        logging.info(
+        self.print_log(
             f"===== 📊▶️CUSTOM_METRICS_PLUGIN. Task {task_instance.task_id} in DAG {task_instance.dag_id} is starting ====="
         )
 
@@ -138,7 +161,7 @@ class TaskMonitorListener:
                 Stats.gauge(self.get_metric_name(task_instance, "custom_metrics_cpu_usage_percent"), cpu_usage)
                 Stats.gauge(self.get_metric_name(task_instance, "custom_metrics_memory_usage_bytes"), memory_usage)
 
-                logging.info(
+                self.print_log(
                     f"===== 📊CUSTOM_METRICS_PLUGIN. Memory usage: {convert_bytes_to_readable_value(memory_usage)}, CPU usage: {cpu_usage:.2f}% ====="
                 )
                 time.sleep(sleep_interval_seconds)

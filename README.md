@@ -11,7 +11,7 @@ Tested on python 3.12.4 and apache-airflow 2.9.3
 
 The `CustomMetricsPlugin` is an Apache Airflow plugin designed to monitor the CPU and memory usage of tasks in
 real-time. This plugin gathers these metrics and pushes them to StatsD, where they can be visualized using monitoring
-tools such as Grafana. Also, it prints the metrics to the logs (I'm not sure if it's useful, but it's there :D).
+tools such as Grafana. Also, you can enable printing metrics to the logs.
 
 ## Features
 
@@ -48,7 +48,11 @@ tools such as Grafana. Also, it prints the metrics to the logs (I'm not sure if 
    The plugin can be enabled or disabled using an environment variable. To enable it, set the
    `CUSTOM_METRICS_PLUGIN_ENABLED` environment variable to `true`
 
-5. **Setting 'mappingConfig'** for statsd
+5. **Enable logging**:
+   The logs can be enabled or disabled using an environment variable. To enable it, set the
+   `CUSTOM_METRICS_PLUGIN_LOGGING_ENABLED` environment variable to `true`
+
+6. **Setting 'mappingConfig'** for statsd
    ```
     - match: "*.custom_metrics_cpu_usage_percent.*.*"
       match_metric_type: gauge
@@ -94,6 +98,7 @@ Given a DAG with `dag_id="example_dag"` and a task with `task_id="example_task.t
 - **`CUSTOM_METRICS_PLUGIN_ENABLED`**: Enables or disables the plugin. Set to `true` to enable.
 - **`CUSTOM_METRICS_PLUGIN_SLEEP_INTERVAL_SECONDS`**: Controls how often the plugin polls for CPU and memory usage data.
   Default is `1` second.
+- **`CUSTOM_METRICS_PLUGIN_LOGGING_ENABLED`**: Enables or disables logging. Set to `true` to enable. Default is `false`.
 
 ### Metric Name Customization
 
@@ -110,7 +115,10 @@ support `.` in metric names.
 label_values(airflow_id) - airflow_id
 label_values(tasks_cpu_usage_percent{airflow_id="$airflow_id"}, dag_id) - dag_id
 label_values(tasks_cpu_usage_percent{airflow_id="$airflow_id", dag_id="$dag_id"}, task_id) - task_id
+```
+### Queries for dashboard
 
+```
 tasks_cpu_usage_percent{airflow_id="$airflow_id", dag_id="$dag_id", task_id="$task_id"} - For dashboard `CPU`
 tasks_memory_usage_bytes{airflow_id="$airflow_id", dag_id="$dag_id", task_id="$task_id"} - For dashboard `RAM`
 topk(10, max_over_time(max by(dag_id, task_id) (tasks_cpu_usage_percent{airflow_id="$airflow_id"})[24h])) - For dashboard `Top 10 CPU [24h]`
